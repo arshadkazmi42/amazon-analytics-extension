@@ -41,12 +41,27 @@ document.getElementById("refresh-btn").addEventListener("click", async () => {
   var storageKey = "orderData_" + amazonDomain;
   chrome.storage.local.remove(storageKey);
   showScreen("loading-screen");
-  document.getElementById("loading-status").textContent = "Re-scanning orders...";
+  document.getElementById("loading-status").textContent = "Connecting to Amazon...";
+  var bar = document.getElementById("dash-progress-fill");
+  var detail = document.getElementById("loading-detail");
+  if (bar) bar.style.width = "5%";
+  if (detail) detail.textContent = "";
+
+  // Listen for progress from content script
+  var progressListener = function(msg) {
+    if (msg.action === "progress") {
+      if (bar) bar.style.width = Math.min(90, 10 + msg.count * 2) + "%";
+      document.getElementById("loading-status").textContent = "Scanning " + msg.year + "...";
+      if (detail) detail.textContent = msg.count + " orders found so far";
+    }
+  };
+  chrome.runtime.onMessage.addListener(progressListener);
 
   // Find a tab for the current domain
   var tabs = await chrome.tabs.query({ url: "https://" + amazonDomain + "/*" });
   var orderUrl = "https://" + amazonDomain + "/your-orders/orders";
   if (tabs.length === 0) {
+    document.getElementById("loading-status").textContent = "Opening Amazon...";
     const newTab = await chrome.tabs.create({ url: orderUrl, active: false });
     await new Promise((resolve) => {
       chrome.tabs.onUpdated.addListener(function listener(tabId, info) {
@@ -60,8 +75,15 @@ document.getElementById("refresh-btn").addEventListener("click", async () => {
   }
 
   try {
+    document.getElementById("loading-status").textContent = "Scanning orders...";
     const response = await chrome.tabs.sendMessage(tabs[0].id, { action: "scrapeOrders" });
+    chrome.runtime.onMessage.removeListener(progressListener);
+
     if (response && response.orders && response.orders.length > 0) {
+      if (bar) bar.style.width = "100%";
+      document.getElementById("loading-status").textContent = "Building dashboard...";
+      if (detail) detail.textContent = response.orders.length + " orders analyzed";
+
       currency = response.currency || currency;
       amazonDomain = response.domain || amazonDomain;
       var data = { orders: response.orders, timestamp: Date.now(), currency: currency, domain: amazonDomain };
@@ -69,11 +91,12 @@ document.getElementById("refresh-btn").addEventListener("click", async () => {
       toStore["orderData_" + amazonDomain] = data;
       chrome.storage.local.set(toStore);
       allOrders = response.orders;
-      showDashboard();
+      setTimeout(function() { showDashboard(); }, 500);
     } else {
       showError("No orders found. Make sure you are logged in to Amazon.");
     }
   } catch (err) {
+    chrome.runtime.onMessage.removeListener(progressListener);
     showError("Could not connect to Amazon. Please open Amazon in another tab and try again.");
   }
 });

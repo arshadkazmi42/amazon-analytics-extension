@@ -124,6 +124,44 @@ body::-webkit-scrollbar-thumb {
   font-size: 13px;
 }
 
+.dash-progress-bar {
+  width: 280px;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  margin: 20px 0 10px;
+  overflow: hidden;
+}
+
+.dash-progress-fill {
+  height: 100%;
+  width: 5%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent), #ffb84d);
+  transition: width 0.4s ease;
+  position: relative;
+}
+
+.dash-progress-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+.loading-detail {
+  font-size: 12px !important;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
 .progress-bar {
   width: 200px;
   height: 4px;

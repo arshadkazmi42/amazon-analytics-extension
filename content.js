@@ -67,14 +67,88 @@ function injectFAB() {
     "  transition: opacity 0.2s, transform 0.2s; pointer-events: none;",
     "}",
     "#amz-analytics-fab:hover #amz-fab-tooltip { opacity: 1; transform: translateX(0); }",
-    "#amz-fab-progress {",
-    "  position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);",
-    "  background: #232f3e; color: #ff9900; font-size: 10px; font-weight: 600;",
-    "  padding: 2px 8px; border-radius: 10px; white-space: nowrap;",
-    "  box-shadow: 0 2px 8px rgba(0,0,0,0.3);",
-    "}",
     "@keyframes amz-fab-spin { to { transform: rotate(360deg); } }",
-    "#amz-fab-btn.loading svg { animation: amz-fab-spin 1.5s linear infinite; }"
+    "#amz-fab-btn.loading svg { animation: amz-fab-spin 1.5s linear infinite; }",
+    "",
+    "/* --- Progress Overlay --- */",
+    "#amz-progress-overlay {",
+    "  position: fixed; inset: 0; z-index: 9999999;",
+    "  background: rgba(15, 17, 23, 0.85); backdrop-filter: blur(8px);",
+    "  display: flex; align-items: center; justify-content: center;",
+    "  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;",
+    "  animation: amz-overlay-in 0.3s ease;",
+    "}",
+    "@keyframes amz-overlay-in { from { opacity: 0; } to { opacity: 1; } }",
+    "#amz-progress-card {",
+    "  background: #1a1d27; border: 1px solid #2a2e3d; border-radius: 20px;",
+    "  padding: 40px 48px; width: 420px; text-align: center;",
+    "  box-shadow: 0 20px 60px rgba(0,0,0,0.5);",
+    "  animation: amz-card-in 0.4s ease;",
+    "}",
+    "@keyframes amz-card-in { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: none; } }",
+    "#amz-progress-card .amz-p-icon {",
+    "  width: 64px; height: 64px; margin: 0 auto 20px;",
+    "  border-radius: 16px; background: linear-gradient(135deg, #ff9900, #e68a00);",
+    "  display: flex; align-items: center; justify-content: center;",
+    "  box-shadow: 0 4px 20px rgba(255,153,0,0.3);",
+    "}",
+    "#amz-progress-card .amz-p-icon svg { animation: amz-fab-spin 2s linear infinite; }",
+    "#amz-progress-card .amz-p-title {",
+    "  font-size: 20px; font-weight: 700; color: #e4e6ed; margin-bottom: 4px;",
+    "}",
+    "#amz-progress-card .amz-p-subtitle {",
+    "  font-size: 13px; color: #8b8fa3; margin-bottom: 24px;",
+    "}",
+    "#amz-progress-card .amz-p-bar-wrap {",
+    "  width: 100%; height: 8px; background: #2a2e3d; border-radius: 4px;",
+    "  overflow: hidden; margin-bottom: 16px;",
+    "}",
+    "#amz-progress-card .amz-p-bar {",
+    "  height: 100%; width: 5%; border-radius: 4px;",
+    "  background: linear-gradient(90deg, #ff9900, #ffb84d);",
+    "  transition: width 0.4s ease;",
+    "  position: relative;",
+    "}",
+    "#amz-progress-card .amz-p-bar::after {",
+    "  content: ''; position: absolute; inset: 0; border-radius: 4px;",
+    "  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);",
+    "  animation: amz-bar-shimmer 1.5s infinite;",
+    "}",
+    "@keyframes amz-bar-shimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }",
+    "#amz-progress-card .amz-p-stats {",
+    "  display: flex; justify-content: center; gap: 32px; margin-bottom: 16px;",
+    "}",
+    "#amz-progress-card .amz-p-stat {",
+    "  display: flex; flex-direction: column; align-items: center;",
+    "}",
+    "#amz-progress-card .amz-p-stat-value {",
+    "  font-size: 28px; font-weight: 700; color: #ff9900;",
+    "  line-height: 1.1;",
+    "}",
+    "#amz-progress-card .amz-p-stat-label {",
+    "  font-size: 11px; color: #8b8fa3; text-transform: uppercase;",
+    "  letter-spacing: 0.5px; font-weight: 500;",
+    "}",
+    "#amz-progress-card .amz-p-year {",
+    "  font-size: 13px; color: #8b8fa3;",
+    "}",
+    "#amz-progress-card .amz-p-year span {",
+    "  color: #e4e6ed; font-weight: 600;",
+    "}",
+    "#amz-progress-card .amz-p-steps {",
+    "  display: flex; gap: 6px; justify-content: center; margin-top: 20px; flex-wrap: wrap;",
+    "}",
+    "#amz-progress-card .amz-p-step {",
+    "  padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 500;",
+    "  background: #2a2e3d; color: #8b8fa3; transition: all 0.3s;",
+    "}",
+    "#amz-progress-card .amz-p-step.active {",
+    "  background: rgba(255,153,0,0.15); color: #ff9900;",
+    "  box-shadow: 0 0 8px rgba(255,153,0,0.2);",
+    "}",
+    "#amz-progress-card .amz-p-step.done {",
+    "  background: rgba(34,197,94,0.15); color: #22c55e;",
+    "}"
   ].join("\n");
 
   document.head.appendChild(style);
@@ -83,10 +157,95 @@ function injectFAB() {
   document.getElementById("amz-fab-btn").addEventListener("click", handleFABClick);
 }
 
-async function handleFABClick() {
-  var btn = document.getElementById("amz-fab-btn");
-  var tooltip = document.getElementById("amz-fab-tooltip");
+function showProgressOverlay(years) {
+  removeProgressOverlay();
+  var yearSteps = "";
+  for (var i = 0; i < years.length; i++) {
+    yearSteps += '<span class="amz-p-step" data-year="' + years[i] + '">' + years[i] + '</span>';
+  }
 
+  var overlay = document.createElement("div");
+  overlay.id = "amz-progress-overlay";
+  overlay.innerHTML =
+    '<div id="amz-progress-card">' +
+    '  <div class="amz-p-icon">' +
+    '    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">' +
+    '      <rect x="3" y="12" width="4" height="9" rx="1"/>' +
+    '      <rect x="10" y="7" width="4" height="14" rx="1"/>' +
+    '      <rect x="17" y="3" width="4" height="18" rx="1"/>' +
+    '    </svg>' +
+    '  </div>' +
+    '  <div class="amz-p-title">Analyzing Your Orders</div>' +
+    '  <div class="amz-p-subtitle" id="amz-p-status">Preparing to scan...</div>' +
+    '  <div class="amz-p-bar-wrap"><div class="amz-p-bar" id="amz-p-bar"></div></div>' +
+    '  <div class="amz-p-stats">' +
+    '    <div class="amz-p-stat">' +
+    '      <div class="amz-p-stat-value" id="amz-p-count">0</div>' +
+    '      <div class="amz-p-stat-label">Orders Found</div>' +
+    '    </div>' +
+    '    <div class="amz-p-stat">' +
+    '      <div class="amz-p-stat-value" id="amz-p-year-num">0/' + years.length + '</div>' +
+    '      <div class="amz-p-stat-label">Years Scanned</div>' +
+    '    </div>' +
+    '  </div>' +
+    '  <div class="amz-p-steps">' + yearSteps + '</div>' +
+    '</div>';
+
+  document.body.appendChild(overlay);
+}
+
+function updateProgressOverlay(year, count, yearIndex, totalYears) {
+  var bar = document.getElementById("amz-p-bar");
+  var status = document.getElementById("amz-p-status");
+  var countEl = document.getElementById("amz-p-count");
+  var yearNum = document.getElementById("amz-p-year-num");
+  if (!bar) return;
+
+  var pct = Math.max(5, Math.min(95, ((yearIndex + 1) / totalYears) * 100));
+  bar.style.width = pct + "%";
+  status.textContent = "Scanning " + year + "...";
+  countEl.textContent = count;
+  yearNum.textContent = (yearIndex + 1) + "/" + totalYears;
+
+  // Update year step pills
+  var steps = document.querySelectorAll("#amz-progress-overlay .amz-p-step");
+  for (var i = 0; i < steps.length; i++) {
+    var sy = parseInt(steps[i].getAttribute("data-year"));
+    if (sy === year) {
+      steps[i].className = "amz-p-step active";
+    } else if (sy > year) {
+      steps[i].className = "amz-p-step";
+    } else {
+      steps[i].className = "amz-p-step done";
+    }
+  }
+}
+
+function finishProgressOverlay(count) {
+  var bar = document.getElementById("amz-p-bar");
+  var status = document.getElementById("amz-p-status");
+  var countEl = document.getElementById("amz-p-count");
+  var title = document.querySelector("#amz-progress-card .amz-p-title");
+  if (!bar) return;
+
+  bar.style.width = "100%";
+  countEl.textContent = count;
+  if (title) title.textContent = "Analysis Complete!";
+  if (status) status.textContent = count > 0 ? "Opening dashboard..." : "No orders found";
+
+  // Mark all steps done
+  var steps = document.querySelectorAll("#amz-progress-overlay .amz-p-step");
+  for (var i = 0; i < steps.length; i++) {
+    steps[i].className = "amz-p-step done";
+  }
+}
+
+function removeProgressOverlay() {
+  var existing = document.getElementById("amz-progress-overlay");
+  if (existing) existing.remove();
+}
+
+async function handleFABClick() {
   // Check for cached data for THIS domain
   var cached = await new Promise(function(resolve) {
     chrome.storage.local.get(STORAGE_KEY, function(r) { resolve(r[STORAGE_KEY] || null); });
@@ -100,24 +259,24 @@ async function handleFABClick() {
     }
   }
 
-  // Start scraping with visual feedback
-  btn.classList.add("loading");
-  tooltip.textContent = "Scanning orders...";
-  tooltip.style.opacity = "1";
-  tooltip.style.transform = "translateX(0)";
-
-  var progressEl = document.getElementById("amz-fab-progress");
-  if (!progressEl) {
-    progressEl = document.createElement("div");
-    progressEl.id = "amz-fab-progress";
-    btn.appendChild(progressEl);
+  // Get years first to show in the overlay
+  var years = extractYearsFromDoc(document);
+  if (years.length === 0) {
+    var currentYear = new Date().getFullYear();
+    for (var y = currentYear; y >= currentYear - 4; y--) years.push(y);
   }
-  progressEl.textContent = "0 orders";
+  years.sort(function(a, b) { return b - a; });
 
+  showProgressOverlay(years);
+
+  var scrapeYearIndex = 0;
   var progressListener = function(msg) {
     if (msg.action === "progress") {
-      progressEl.textContent = msg.count + " orders";
-      tooltip.textContent = "Scanning " + msg.year + "...";
+      // Figure out which year index we're on
+      for (var i = 0; i < years.length; i++) {
+        if (years[i] === msg.year) { scrapeYearIndex = i; break; }
+      }
+      updateProgressOverlay(msg.year, msg.count, scrapeYearIndex, years.length);
     }
   };
   chrome.runtime.onMessage.addListener(progressListener);
@@ -126,31 +285,27 @@ async function handleFABClick() {
     var result = await scrapeAllOrders();
 
     if (result.orders && result.orders.length > 0) {
+      finishProgressOverlay(result.orders.length);
       var data = { orders: result.orders, timestamp: Date.now(), currency: result.currency, domain: result.domain };
       var toStore = {};
       toStore[STORAGE_KEY] = data;
       chrome.storage.local.set(toStore);
-      chrome.runtime.sendMessage({ action: "openDashboard", domain: AMAZON_DOMAIN });
-    } else {
-      tooltip.textContent = "No orders found";
       setTimeout(function() {
-        tooltip.textContent = "Analyze My Orders";
-        tooltip.style.opacity = "";
-        tooltip.style.transform = "";
-      }, 3000);
+        removeProgressOverlay();
+        chrome.runtime.sendMessage({ action: "openDashboard", domain: AMAZON_DOMAIN });
+      }, 800);
+    } else {
+      finishProgressOverlay(0);
+      setTimeout(function() { removeProgressOverlay(); }, 2000);
     }
   } catch (err) {
     console.error("Scrape error:", err);
-    tooltip.textContent = "Error - try again";
-    setTimeout(function() {
-      tooltip.textContent = "Analyze My Orders";
-      tooltip.style.opacity = "";
-      tooltip.style.transform = "";
-    }, 3000);
+    finishProgressOverlay(0);
+    var status = document.getElementById("amz-p-status");
+    if (status) status.textContent = "Error - please try again";
+    setTimeout(function() { removeProgressOverlay(); }, 2000);
   }
 
-  btn.classList.remove("loading");
-  if (progressEl) progressEl.remove();
   chrome.runtime.onMessage.removeListener(progressListener);
 }
 
