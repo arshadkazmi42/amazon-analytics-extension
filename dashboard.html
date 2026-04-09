@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amazon.de Analytics</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Loading State -->
+    <div id="loading-screen" class="screen">
+      <div class="loader-container">
+        <div class="logo-pulse">
+          <svg width="64" height="64" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="12" fill="url(#grad1)"/>
+            <path d="M14 28C14 28 18 32 24 32C30 32 34 28 34 28" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M36 28L38 30" stroke="#FF9900" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="18" cy="22" r="2" fill="white"/>
+            <circle cx="30" cy="22" r="2" fill="white"/>
+            <defs>
+              <linearGradient id="grad1" x1="0" y1="0" x2="48" y2="48">
+                <stop offset="0%" stop-color="#232F3E"/>
+                <stop offset="100%" stop-color="#37475A"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <h2>Loading Analytics...</h2>
+        <p id="loading-status">Reading order data...</p>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-screen" class="screen hidden">
+      <div class="error-container">
+        <div class="error-icon">!</div>
+        <h2>No Data Found</h2>
+        <p id="error-message">Please go to Amazon.de, log in, and click the analytics button to scan your orders first.</p>
+        <a href="https://www.amazon.de/your-orders/orders" class="btn-primary" target="_blank">Go to Amazon.de Orders</a>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="screen hidden">
+      <header>
+        <div class="header-left">
+          <h1>Amazon<span class="accent">.de</span> Analytics</h1>
+          <span id="order-count-badge" class="badge"></span>
+        </div>
+        <div class="header-right">
+          <button id="refresh-btn" class="btn-secondary" title="Re-scan orders from Amazon.de">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M13.65 2.35A8 8 0 1 0 16 8h-2a6 6 0 1 1-1.76-4.24L10 6h6V0l-2.35 2.35z"/>
+            </svg>
+            Re-scan
+          </button>
+        </div>
+      </header>
+
+      <!-- Summary Cards -->
+      <div class="summary-grid">
+        <div class="summary-card gradient-blue">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <path d="M2 10h20"/>
+            </svg>
+          </div>
+          <div class="card-content">
+            <span class="card-label">Total Spent</span>
+            <span id="total-spent" class="card-value">-</span>
+          </div>
+        </div>
+        <div class="summary-card gradient-purple">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 12V8H6a2 2 0 0 1 0-4h14v4"/>
+              <path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/>
+              <circle cx="18" cy="16" r="1"/>
+            </svg>
+          </div>
+          <div class="card-content">
+            <span class="card-label">Total Orders</span>
+            <span id="total-orders" class="card-value">-</span>
+          </div>
+        </div>
+        <div class="summary-card gradient-green">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <div class="card-content">
+            <span class="card-label">Avg. Order</span>
+            <span id="avg-order" class="card-value">-</span>
+          </div>
+        </div>
+        <div class="summary-card gradient-orange">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+          </div>
+          <div class="card-content">
+            <span class="card-label">Biggest Order</span>
+            <span id="biggest-order" class="card-value">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Year filter -->
+      <div class="year-filter">
+        <button class="year-btn active" data-year="all">All Years</button>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-grid">
+        <div class="chart-card wide">
+          <h3>Monthly Spending</h3>
+          <div class="chart-container">
+            <canvas id="monthlyChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3>Spending by Category</h3>
+          <div class="chart-container doughnut">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3>Yearly Comparison</h3>
+          <div class="chart-container">
+            <canvas id="yearlyChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card wide">
+          <h3>Orders Over Time</h3>
+          <div class="chart-container">
+            <canvas id="ordersTimelineChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Insights Section -->
+      <div class="insights-section">
+        <h3>Key Insights</h3>
+        <div id="insights-grid" class="insights-grid"></div>
+      </div>
+
+      <!-- Top Orders -->
+      <div class="top-orders-section">
+        <h3>Top 10 Most Expensive Orders</h3>
+        <div id="top-orders" class="top-orders-list"></div>
+      </div>
+
+      <footer>
+        <p>Data analyzed locally in your browser. Nothing is sent externally.</p>
+      </footer>
+    </div>
+  </div>
+
+  <script src="lib/chart.min.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Amazon Analytics",
+  "version": "1.1.0",
+  "description": "Analyze your Amazon purchase history with beautiful analytics",
+  "permissions": ["activeTab", "storage", "tabs"],
+  "host_permissions": ["https://www.amazon.de/*", "https://www.amazon.in/*", "https://www.amazon.com/*"],
+  "action": {
+    "default_icon": {
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.amazon.de/*", "https://www.amazon.in/*", "https://www.amazon.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["dashboard.html", "dashboard.css", "dashboard.js", "lib/chart.min.js"],
+      "matches": ["https://www.amazon.de/*", "https://www.amazon.in/*", "https://www.amazon.com/*"]
+    }
+  ],
+  "icons": {
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
