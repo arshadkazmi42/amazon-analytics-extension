@@ -7,6 +7,8 @@ Supports **Amazon.de** (EUR), **Amazon.in** (INR), and **Amazon.com** (USD).
 ![Chrome Extension](https://img.shields.io/badge/Platform-Chrome-4285F4?logo=googlechrome&logoColor=white)
 ![Manifest V3](https://img.shields.io/badge/Manifest-V3-green)
 
+![Amazon Analytics Dashboard](screenshot.png)
+
 ## Features
 
 - **One-click analysis** — Click the floating button on any Amazon page and your entire order history is scanned automatically
